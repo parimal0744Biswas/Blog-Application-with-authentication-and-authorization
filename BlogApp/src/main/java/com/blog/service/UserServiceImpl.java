@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.blog.exception.UserException;
 import com.blog.model.User;
 import com.blog.payloads.UserDTO;
 import com.blog.repository.UserRepo;
 
+@Service
 public class UserServiceImpl implements UserService
 {
 	@Autowired
@@ -55,14 +57,19 @@ public class UserServiceImpl implements UserService
 		List<User> userlist = this.uRepo.findAll();
 
 		List<UserDTO> dtolist = userlist.stream().map(user -> this.userToUserDTO(user)).collect(Collectors.toList());
+
 		return dtolist;
 	}
 
 	@Override
-	public UserDTO deleteUserByID(Integer id)
+	public UserDTO deleteUserByID(Integer id) throws UserException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		User user = this.uRepo.findById(id).orElseThrow(() -> new UserException("User Not found"));
+
+		this.uRepo.deleteById(id);
+
+		return this.userToUserDTO(user);
+
 	}
 
 	private User DTOtoUser(UserDTO userDTO)
