@@ -19,7 +19,7 @@ import com.blog.payloads.UserDTO;
 import com.blog.service.UserService;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/user")
 public class UserController
 {
 	@Autowired
@@ -33,7 +33,7 @@ public class UserController
 		return new ResponseEntity<UserDTO>(uDto, HttpStatus.CREATED);
 	}
 
-	@PutMapping("/{uid}")
+	@PutMapping("/update/{uid}")
 	public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO uDto, @PathVariable("uid") Integer uid)
 			throws UserException
 	{
@@ -42,13 +42,12 @@ public class UserController
 		return new ResponseEntity<UserDTO>(updateUser, HttpStatus.ACCEPTED);
 	}
 
-	@DeleteMapping("/{uid}")
-	public ResponseEntity<UserDTO> deleteUser(@RequestBody UserDTO uDto, @PathVariable("uid") Integer uid)
-			throws UserException
+	@DeleteMapping("/delete/{uid}")
+	public ResponseEntity<UserDTO> deleteUser(@PathVariable("uid") Integer uid) throws UserException
 	{
-		UserDTO updateUser = this.uService.updateUser(uDto, uid);
+		UserDTO delUser = this.uService.deleteUserByID(uid);
 
-		return new ResponseEntity<UserDTO>(updateUser, HttpStatus.ACCEPTED);
+		return new ResponseEntity<UserDTO>(delUser, HttpStatus.ACCEPTED);
 	}
 
 	@GetMapping("/{uid}")
@@ -60,11 +59,11 @@ public class UserController
 	}
 
 	@GetMapping("/all")
-	public ResponseEntity<UserDTO> viewAllUser() throws UserException
+	public ResponseEntity<List<UserDTO>> viewAllUser() throws UserException
 	{
 		List<UserDTO> allUser = this.uService.getAllUser();
 
-		return new ResponseEntity<List>(allUser, HttpStatus.ACCEPTED);
+		return new ResponseEntity<List<UserDTO>>(allUser, HttpStatus.ACCEPTED);
 	}
 
 }
