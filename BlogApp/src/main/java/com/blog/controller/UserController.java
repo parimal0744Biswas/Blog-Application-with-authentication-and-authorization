@@ -18,6 +18,8 @@ import com.blog.exception.UserException;
 import com.blog.payloads.UserDTO;
 import com.blog.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/user")
 public class UserController
@@ -26,7 +28,7 @@ public class UserController
 	private UserService uService;
 
 	@PostMapping("/create")
-	public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDto)
+	public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDto)
 	{
 		UserDTO uDto = this.uService.createUser(userDto);
 
