@@ -19,11 +19,14 @@ public class CategoryServiceImpl implements CategoryService
 	@Autowired
 	private ModelMapper mapper;
 
+	// 16 no Video-->9:58
+
 	@Override
 	public CategoryDTO createCategory(CategoryDTO cDto)
 	{
+		Category registerCategory = this.cRepo.save(mapper.map(cDto, Category.class));
 
-		return this.cRepo.save(mapper.map(cDto, Category.class));
+		return this.mapper.map(registerCategory, CategoryDTO.class);
 	}
 
 	@Override
