@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.blog.exception.CategoryException;
 import com.blog.model.Category;
 import com.blog.payloads.CategoryDTO;
 import com.blog.repository.CategoryRepo;
@@ -19,42 +20,44 @@ public class CategoryServiceImpl implements CategoryService
 	@Autowired
 	private ModelMapper mapper;
 
-	// 16 no Video-->9:58
-
 	@Override
 	public CategoryDTO createCategory(CategoryDTO cDto)
 	{
 		Category registerCategory = this.cRepo.save(mapper.map(cDto, Category.class));
-
 		return this.mapper.map(registerCategory, CategoryDTO.class);
 	}
 
 	@Override
-	public CategoryDTO updateCategory(CategoryDTO cDto, Integer cId)
+	public CategoryDTO updateCategory(CategoryDTO cDto, Integer cId) throws CategoryException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Category category = this.cRepo.findById(cId).orElseThrow(() -> new CategoryException("Category Not Found"));
+		return this.mapper.map(category, CategoryDTO.class);
 	}
 
 	@Override
-	public CategoryDTO deleteCategory(Integer cId)
+	public CategoryDTO deleteCategory(Integer cId) throws CategoryException
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		Category category = this.cRepo.findById(cId).get();
+		this.cRepo.deleteById(cId);
+		return this.mapper.map(category, CategoryDTO.class);
 	}
 
 	@Override
-	public CategoryDTO getCategory(Integer cId)
+	public CategoryDTO getCategory(Integer cId) throws CategoryException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Category category = this.cRepo.findById(cId).get();
+
+		return this.mapper.map(category, CategoryDTO.class);
 	}
 
 	@Override
 	public List<CategoryDTO> getAllCategory()
 	{
-		// TODO Auto-generated method stub
+		List<Category> categories = this.cRepo.findAll();
+
 		return null;
+
 	}
 
 }
