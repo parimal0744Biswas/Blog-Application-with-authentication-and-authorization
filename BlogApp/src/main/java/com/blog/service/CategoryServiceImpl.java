@@ -1,6 +1,7 @@
 package com.blog.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService
 	@Override
 	public CategoryDTO createCategory(CategoryDTO cDto)
 	{
-		Category registerCategory = this.cRepo.save(mapper.map(cDto, Category.class));
+		Category registerCategory = this.cRepo.save(this.mapper.map(cDto, Category.class));
 		return this.mapper.map(registerCategory, CategoryDTO.class);
 	}
 
@@ -56,7 +57,10 @@ public class CategoryServiceImpl implements CategoryService
 	{
 		List<Category> categories = this.cRepo.findAll();
 
-		return null;
+		List<CategoryDTO> listofDtos = categories.stream().map(s -> this.mapper.map(s, CategoryDTO.class))
+				.collect(Collectors.toList());
+
+		return listofDtos;
 
 	}
 
