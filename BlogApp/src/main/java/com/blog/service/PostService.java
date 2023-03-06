@@ -10,7 +10,7 @@ import com.blog.payloads.PostDTO;
 @Service
 public interface PostService
 {
-	PostDTO createPost(PostDTO pDto);
+	PostDTO createPost(PostDTO pDto, Integer userId, Integer categoryId);
 
 	PostDTO updatePost(PostDTO pDtomDto, Integer postId);
 

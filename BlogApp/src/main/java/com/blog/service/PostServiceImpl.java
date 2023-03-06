@@ -21,7 +21,7 @@ public class PostServiceImpl implements PostService
 	private ModelMapper mapper;
 
 	@Override
-	public PostDTO createPost(PostDTO pDto)
+	public PostDTO createPost(PostDTO pDto, Integer userId, Integer categoryId)
 	{
 		Post mapping = this.mapper.map(pDto, Post.class);
 		mapping.setImageName("defaultImage.png");
