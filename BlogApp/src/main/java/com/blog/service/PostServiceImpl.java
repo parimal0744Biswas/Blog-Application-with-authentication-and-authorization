@@ -2,14 +2,23 @@ package com.blog.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.xml.catalog.CatalogException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.blog.exception.CategoryException;
+import com.blog.exception.UserException;
+import com.blog.model.Category;
 import com.blog.model.Post;
+import com.blog.model.User;
 import com.blog.payloads.PostDTO;
+import com.blog.repository.CategoryRepo;
 import com.blog.repository.PostRepo;
+import com.blog.repository.UserRepo;
 
 @Service
 public class PostServiceImpl implements PostService
@@ -18,14 +27,35 @@ public class PostServiceImpl implements PostService
 	private PostRepo pRepo;
 
 	@Autowired
+	private UserRepo uRepo;
+
+	@Autowired
+	private CategoryRepo cRepo;
+
+	@Autowired
 	private ModelMapper mapper;
 
 	@Override
 	public PostDTO createPost(PostDTO pDto, Integer userId, Integer categoryId)
 	{
+		Category existCategory = this.cRepo.findById(categoryId)
+				.orElseThrow(() -> new CatalogException("Category Not Found"));
+
+		User existUser = null;
+		try
+		{
+			existUser = this.uRepo.findById(userId).orElseThrow(() -> new UserException("User Not Found"));
+		}
+		catch (UserException e)
+		{
+			e.printStackTrace();
+		}
+
 		Post mapping = this.mapper.map(pDto, Post.class);
 		mapping.setImageName("defaultImage.png");
 		mapping.setAddedDate(new Date());
+		mapping.setCategory(existCategory);
+		mapping.setUser(existUser);
 
 		Post savedPost = pRepo.save(mapping);
 		return this.mapper.map(savedPost, PostDTO.class);
@@ -60,16 +90,22 @@ public class PostServiceImpl implements PostService
 	}
 
 	@Override
-	public List<PostDTO> getPostsByCategory(Integer categoryId)
+	public List<PostDTO> getPostsByCategory(Integer categoryId) throws CategoryException
 	{
+		Category category = this.cRepo.findById(categoryId).orElseThrow(() -> new CategoryException());
 
-		return null;
+		List<Post> posts = category.getPosts();
+
+		List<PostDTO> postDTOs = posts.stream().map(s -> this.mapper.map(s, PostDTO.class))
+				.collect(Collectors.toList());
+
+		return postDTOs;
 	}
 
 	@Override
-	public List<PostDTO> getPostsByUser(Integer userId)
+	public List<PostDTO> getPostsByUser(Integer userId) throws UserException
 	{
-
+		this.uRepo.findById(userId).orElseThrow(() -> new UserException("User Not Found"));
 		return null;
 	}
 
