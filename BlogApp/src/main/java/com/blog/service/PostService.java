@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.blog.exception.CategoryException;
+import com.blog.exception.PostException;
 import com.blog.exception.UserException;
 import com.blog.payloads.PostDTO;
 
@@ -20,7 +21,7 @@ public interface PostService
 
 	List<PostDTO> getAllPost();
 
-	PostDTO getPostById(Integer postId);
+	PostDTO getPostById(Integer postId) throws PostException;
 
 	List<PostDTO> getPostsByCategory(Integer categoryId) throws CategoryException;
 

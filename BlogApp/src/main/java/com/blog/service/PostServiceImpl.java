@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.blog.exception.CategoryException;
+import com.blog.exception.PostException;
 import com.blog.exception.UserException;
 import com.blog.model.Category;
 import com.blog.model.Post;
@@ -78,15 +79,16 @@ public class PostServiceImpl implements PostService
 	@Override
 	public List<PostDTO> getAllPost()
 	{
+		List<Post> posts = this.pRepo.findAll();
 
-		return null;
+		return posts.stream().map(s -> this.mapper.map(s, PostDTO.class)).collect(Collectors.toList());
 	}
 
 	@Override
-	public PostDTO getPostById(Integer postId)
+	public PostDTO getPostById(Integer postId) throws PostException
 	{
-
-		return null;
+		Post post = this.pRepo.findById(postId).orElseThrow(() -> new PostException("Post Not Found"));
+		return this.mapper.map(post, PostDTO.class);
 	}
 
 	@Override
@@ -105,8 +107,12 @@ public class PostServiceImpl implements PostService
 	@Override
 	public List<PostDTO> getPostsByUser(Integer userId) throws UserException
 	{
-		this.uRepo.findById(userId).orElseThrow(() -> new UserException("User Not Found"));
-		return null;
+		User user = this.uRepo.findById(userId).orElseThrow(() -> new UserException("User Not Found"));
+		List<Post> posts = user.getPosts();
+		List<PostDTO> postDTOs = posts.stream().map(s -> this.mapper.map(s, PostDTO.class))
+				.collect(Collectors.toList());
+
+		return postDTOs;
 	}
 
 	@Override
