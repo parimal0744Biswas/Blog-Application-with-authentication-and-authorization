@@ -8,6 +8,9 @@ import javax.xml.catalog.CatalogException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.blog.exception.CategoryException;
@@ -63,25 +66,43 @@ public class PostServiceImpl implements PostService
 	}
 
 	@Override
-	public PostDTO updatePost(PostDTO pDtomDto, Integer postId)
+	public PostDTO updatePost(PostDTO pDtomDto, Integer postId) throws PostException
 	{
+		Post existPost = this.pRepo.findById(postId).orElseThrow(() -> new PostException("Post Not Found"));
 
-		return null;
+		// this.pRepo.delete(post);
+		existPost.setAddedDate(pDtomDto.getAddedDate());
+		existPost.setContent(pDtomDto.getContent());
+		existPost.setImageName(pDtomDto.getImageName());
+		existPost.setTitle(pDtomDto.getTitle());
+
+		this.pRepo.save(existPost);
+
+		return this.mapper.map(existPost, PostDTO.class);
+
 	}
 
 	@Override
-	public PostDTO deletePost(Integer postId)
+	public PostDTO deletePost(Integer postId) throws PostException
 	{
+		Post post = this.pRepo.findById(postId).orElseThrow(() -> new PostException("Post Not Found"));
 
-		return null;
+		this.pRepo.delete(post);
+
+		return this.mapper.map(post, PostDTO.class);
+
 	}
 
 	@Override
-	public List<PostDTO> getAllPost()
+	public List<PostDTO> getAllPost(Integer pageNumber, Integer pageSize)
 	{
-		List<Post> posts = this.pRepo.findAll();
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-		return posts.stream().map(s -> this.mapper.map(s, PostDTO.class)).collect(Collectors.toList());
+		Page<Post> pagePosts = this.pRepo.findAll(pageable);
+
+		List<Post> allPosts = pagePosts.getContent();
+
+		return allPosts.stream().map(s -> this.mapper.map(s, PostDTO.class)).collect(Collectors.toList());
 	}
 
 	@Override

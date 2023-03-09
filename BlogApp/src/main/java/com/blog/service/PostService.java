@@ -15,11 +15,11 @@ public interface PostService
 {
 	PostDTO createPost(PostDTO pDto, Integer userId, Integer categoryId);
 
-	PostDTO updatePost(PostDTO pDtomDto, Integer postId);
+	PostDTO updatePost(PostDTO pDtomDto, Integer postId) throws PostException;
 
-	PostDTO deletePost(Integer postId);
+	PostDTO deletePost(Integer postId) throws PostException;
 
-	List<PostDTO> getAllPost();
+	List<PostDTO> getAllPost(Integer pageNumber, Integer pageSize);
 
 	PostDTO getPostById(Integer postId) throws PostException;
 
