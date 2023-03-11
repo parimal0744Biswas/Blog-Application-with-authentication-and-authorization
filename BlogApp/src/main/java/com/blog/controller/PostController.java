@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.config.AppConstants;
 import com.blog.exception.CategoryException;
 import com.blog.exception.PostException;
 import com.blog.exception.UserException;
 import com.blog.payloads.PostDTO;
+import com.blog.payloads.PostResponse;
 import com.blog.service.PostService;
 
 @RestController
@@ -57,14 +59,18 @@ public class PostController
 	}
 
 	@GetMapping("/all")
-	public ResponseEntity<List<PostDTO>> getAllPostHandler(
-			@RequestParam(value = "pageNumber", defaultValue = "1", required = false) Integer pageNumber,
-			@RequestParam(value = "pageNumber", defaultValue = "5", required = false) Integer pageSize)
+	public ResponseEntity<PostResponse> getAllPostHandler(
+			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+			@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+
+	)
 	{
 
-		List<PostDTO> createdPost = this.pService.getAllPost(pageNumber, pageSize);
+		PostResponse responsePost = this.pService.getAllPost(pageNumber, pageSize, sortBy, sortDir);
 
-		return new ResponseEntity<>(createdPost, HttpStatus.OK);
+		return new ResponseEntity<>(responsePost, HttpStatus.OK);
 	}
 
 	@GetMapping("/{postid}")
@@ -90,6 +96,14 @@ public class PostController
 		PostDTO deletedPost = this.pService.updatePost(postDTO, postid);
 
 		return new ResponseEntity<>(deletedPost, HttpStatus.OK);
+	}
+
+	// searchPostsByKeyword
+	@GetMapping("/search/{keyword}")
+	public ResponseEntity<List<PostDTO>> searchPostsByKeywordHandler(@PathVariable("keyword") String keyword)
+	{
+		List<PostDTO> postDTOs = this.pService.searchPostsByKeyword(keyword);
+		return new ResponseEntity<>(postDTOs, HttpStatus.OK);
 	}
 
 }

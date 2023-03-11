@@ -9,6 +9,7 @@ import com.blog.exception.CategoryException;
 import com.blog.exception.PostException;
 import com.blog.exception.UserException;
 import com.blog.payloads.PostDTO;
+import com.blog.payloads.PostResponse;
 
 @Service
 public interface PostService
@@ -19,7 +20,7 @@ public interface PostService
 
 	PostDTO deletePost(Integer postId) throws PostException;
 
-	List<PostDTO> getAllPost(Integer pageNumber, Integer pageSize);
+	PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 
 	PostDTO getPostById(Integer postId) throws PostException;
 
