@@ -1,11 +1,15 @@
 package com.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.exception.PostException;
 import com.blog.payloads.CommentDTO;
 import com.blog.service.CommentService;
 
@@ -16,10 +20,12 @@ public class CommentController
 	@Autowired
 	private CommentService cService;
 
-	@PostMapping("/post")
-	public ResponseEntity<CommentDTO> createComments()
+	@PostMapping("/post/{postId}")
+	public ResponseEntity<CommentDTO> createComments(@RequestBody CommentDTO commentDTO,
+			@PathVariable("postId") Integer postId) throws PostException
 	{
-		return null;
+		CommentDTO createComment = this.cService.createComment(commentDTO, postId);
+		return new ResponseEntity<>(createComment, HttpStatus.CREATED);
 	}
 
 }
